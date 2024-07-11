@@ -1,4 +1,4 @@
-const Game = require ('../model/gameModel')
+const Game = require('../model/gameModel')
 
 class GameService {
     async getAllGames() {
@@ -20,9 +20,10 @@ class GameService {
 
 
 
-    async  createGame(name, description, genre, platform) {
+    async createGame(gameData) {
+        const { name, description, genre, platform } = gameData
         // Verificação dos campos obrigatórios
-        if (!name || typeof name !== 'string') {
+        if (!name) {
             throw new Error('Name must be a valid string');
         }
         if (!description) {
@@ -42,10 +43,11 @@ class GameService {
         }
     }
 
-    async updateGame(id, name, description, genre, platform){
+    async updateGame(gameData) {
+        const { id, name, description, genre, platform } = gameData
         try {
             const game = await Game.findByPk(id);
-            if(game){
+            if (game) {
                 game.name = name;
                 game.description = description;
                 game.genre = genre;
@@ -66,17 +68,17 @@ class GameService {
             if (!game) {
                 throw new CustomError(`Game with the id ${id} not found`, 404);
             }
-            await game.update(patchData, {fields: Object.keys(patchData)});
+            await game.update(patchData, { fields: Object.keys(patchData) });
             return game;
         } catch (error) {
             throw new CustomError("Error patching the game", 500);
         }
     }
 
-    async deleteGame(id){
-        try{
+    async deleteGame(id) {
+        try {
             const game = await Game.findByPk(id);
-            if(game){
+            if (game) {
                 await game.delete();
             } else {
                 throw new Error(`Jogo com Id ${id} não encontrado`);
